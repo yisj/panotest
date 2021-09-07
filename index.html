@@ -1,0 +1,198 @@
+<style>
+
+p {
+	margin: 0;
+	padding: 0;
+}
+
+.container{
+	display: flex;
+	flex-direction: row;
+}
+
+#mapTitle{
+	text-align: center;
+	background: #dfe6e9;
+	height: 20px;
+	width: 100%;
+}
+
+#map {
+  height: 45%;
+  width: 100%;
+}
+#planTitle{
+	text-align: center;
+	background: #dfe6e9;
+	height: 20px;
+	width: 100%;
+}
+
+#plan {
+	height:  45%;
+	width: 100%;
+	background: pink;
+}
+
+#rightViewerTitle{
+	text-align: center;
+	background: #b2bec3;
+	height: 20px;
+	width: 100%;
+}
+
+#rightViewerTail{
+	background: #dfe6e9;
+	height: 20px;
+	width: 100%;
+}
+
+
+</style>
+
+<body>
+	<div class="container">
+		<div id="leftColumn">
+			<div id="mapTitle">
+				<p><b>지도</b></p>
+			</div>
+			<div id="map">
+			</div>
+			<div id="planTitle">
+				<b>건설현장 뷰</b>
+			</div>
+			<div id="plan">
+			</div>
+		</div>
+		<div id="rightColumn">
+			<div id="rightViewerTitle">
+				<p><b>360 뷰어</b></p>
+			</div>
+			<div id="rightViewer"></div>
+			<div id="rightViewerTail"><p>현장</p></div>
+		</div>
+	</div>
+</body>
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+<script src="three.min.js"></script>
+<script src="panolens.js"></script>
+<script
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBmCvIcaSd3ny5fwgz8HXWXRDDFGgPzBP8&callback=initMap&libraries=&v=weekly"
+      async
+    ></script>
+<script>
+	const panorama = new PANOLENS.ImagePanorama( 'r5376.JPG' );
+	const viewerContainer = document.getElementById('rightViewer');
+	
+	viewerContainer.style.width=document.body.clientWidth * 0.7+"";
+	viewerContainer.style.height=document.body.clientHeight*0.9 +"";
+	const leftColumn = document.getElementById('leftColumn');
+	leftColumn.style.width = document.body.clientWidth*0.3+"";
+	leftColumn.style.height = document.body.clientHeight;
+
+	const viewer = new PANOLENS.Viewer({container: viewerContainer});
+	viewer.add( panorama );
+
+	let map;
+
+	function initMap() {
+	const mapOptions = {
+    zoom: 8,
+    center: { lat: -34.397, lng: 150.644 },
+  };
+  map = new google.maps.Map(document.getElementById("map"), mapOptions);
+  const marker = new google.maps.Marker({
+    // The below line is equivalent to writing:
+    // position: new google.maps.LatLng(-34.397, 150.644)
+    position: { lat: -34.397, lng: 150.644 },
+    map: map,
+  });
+  // You can use a LatLng literal in place of a google.maps.LatLng object when
+  // creating the Marker object. Once the Marker object is instantiated, its
+  // position will be available as a google.maps.LatLng object. In this case,
+  // we retrieve the marker's position using the
+  // google.maps.LatLng.getPosition() method.
+  const infowindow = new google.maps.InfoWindow({
+    content: '<image src="site1.PNG"/>',
+  });
+  infowindow.open(map, marker);
+
+  const marker2 = new google.maps.Marker({
+    // The below line is equivalent to writing:
+    // position: new google.maps.LatLng(-34.397, 150.644)
+    position: { lat: -34.397, lng: 150.244 },
+    map: map,
+  });
+  // You can use a LatLng literal in place of a google.maps.LatLng object when
+  // creating the Marker object. Once the Marker object is instantiated, its
+  // position will be available as a google.maps.LatLng object. In this case,
+  // we retrieve the marker's position using the
+  // google.maps.LatLng.getPosition() method.
+  const infowindow2 = new google.maps.InfoWindow({
+    content: '<image src="site2.PNG"/>',
+  });
+  infowindow2.open(map, marker2);
+
+  const marker3 = new google.maps.Marker({
+    // The below line is equivalent to writing:
+    // position: new google.maps.LatLng(-34.397, 150.644)
+    position: { lat: -35.07, lng: 150.344 },
+    map: map,
+  });
+  // You can use a LatLng literal in place of a google.maps.LatLng object when
+  // creating the Marker object. Once the Marker object is instantiated, its
+  // position will be available as a google.maps.LatLng object. In this case,
+  // we retrieve the marker's position using the
+  // google.maps.LatLng.getPosition() method.
+  const infowindow3 = new google.maps.InfoWindow({
+    content: '<image src="site3.PNG"/>',
+  });
+  infowindow3.open(map, marker3);
+
+  google.maps.event.addListener(marker, "click", () => {
+    infowindow.open(map, marker);
+  });
+  google.maps.event.addListener(marker2, "click", () => {
+    infowindow2.open(map, marker2);
+  });
+  google.maps.event.addListener(marker3, "click", () => {
+    infowindow3.open(map, marker3);
+  });
+}
+
+const plan = document.getElementById("plan");
+let width = plan.clientWidth;
+let height = plan.clientHeight;
+let translate0 = [-100, -100];
+let scale0 = 1;
+let imgWidth = 1024;
+let imgHeight = 685;
+
+
+svg = d3.select("#plan").append("svg")
+    .attr("width",  width + "px")
+    .attr("height", height + "px");
+
+svg.append("rect")
+    .attr("class", "overlay")
+    .attr("width", width + "px")
+    .attr("height", height + "px");
+
+svg = svg.append("g")
+    .attr("transform", "translate(" + translate0 + ")scale(" + scale0 + ")")
+    .call(d3.behavior.zoom().scaleExtent([0.3, 8]).on("zoom", zoom))
+  .append("g");
+
+svg.append("image")
+    .attr("width",  imgWidth + "px")
+    .attr("height", imgHeight + "px")
+    .attr("xlink:href", "construction-site.jpg");
+
+
+function zoom() {
+  svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+  console.log("translate: " + d3.event.translate + ", scale: " + d3.event.scale);
+}
+
+</script>
